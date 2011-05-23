@@ -59,9 +59,6 @@ public class AdvancedSettings extends PreferenceActivity
     private static final int MENU_ITEM_SAVE = Menu.FIRST;
     private static final int MENU_ITEM_CANCEL = Menu.FIRST + 1;
     
-    //Tracks ro.debuggable (1 on userdebug builds)
-    private static int DEBUGGABLE;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,25 +73,7 @@ public class AdvancedSettings extends PreferenceActivity
             preference.setOnPreferenceChangeListener(this);
         }
 
-        DEBUGGABLE = SystemProperties.getInt("ro.debuggable", 0);
-
-        /**
-         * Remove user control of regulatory domain
-         * channel count settings in non userdebug builds
-         */
-        if (DEBUGGABLE == 1) {
-            /*
-             * Fix the Run-time IllegalStateException that ListPreference requires an entries
-             * array and an entryValues array, this exception occurs when user open/close the
-             * slider in the Regulatory domain dialog.
-             */
-            initNumChannelsPreference();
-        } else {
-            Preference chanPref = findPreference(KEY_NUM_CHANNELS);
-            if (chanPref != null) {
-              getPreferenceScreen().removePreference(chanPref);
-            }
-        }
+        initNumChannelsPreference();
     }
     
     @Override
@@ -102,13 +81,7 @@ public class AdvancedSettings extends PreferenceActivity
         super.onResume();
         
         updateUi();
-        /**
-         * Remove user control of regulatory domain
-         * channel count settings in non userdebug builds
-         */
-        if (DEBUGGABLE == 1) {
-            initNumChannelsPreference();
-        }
+        initNumChannelsPreference();
         initSleepPolicyPreference();
         refreshWifiInfo();
     }
